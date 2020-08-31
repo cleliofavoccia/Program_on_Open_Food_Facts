@@ -1,5 +1,7 @@
-"""Creation of database with his tables and different manipulation useful for the program"""
+"""Creation of database with his tables
+and different manipulation useful for the program"""
 import mysql.connector
+import yaml
 
 
 class DataBase:
@@ -9,11 +11,16 @@ class DataBase:
         """Connection to the database "open_food_facts"
         and creation of the mySQL cursor"""
 
+        # File with database data connection
+        with open("config.yml", "r") as ymlfile:
+            cfg = yaml.safe_load(ymlfile)
+
         # Connection to the database open_food_facts
-        self.mydb = mysql.connector.connect(host="localhost",
-                                            user="root", password="Juve1898,",
-                                            database="open_food_facts",
-                                            autocommit=True)
+        self.mydb = mysql.connector.connect(
+            host=cfg["mysql"]["host"],
+            user=cfg["mysql"]["user"], password=cfg["mysql"]["passwd"],
+            database=cfg["mysql"]["db"],
+            autocommit=True)
         # Creation of mySQL cursor
         self.cursor = self.mydb.cursor()
 
@@ -99,8 +106,10 @@ FROM products WHERE category = {user_input}""")
         with better nutriscore than a product
         select by the user in input_product"""
 
-        # Select the category of the product select by the user in input_products
-        self.cursor.execute(f"""SELECT category FROM products WHERE id = {input_product}""")
+        # Select the category of the product
+        # select by the user in input_products
+        self.cursor.execute(
+            f"""SELECT category FROM products WHERE id = {input_product}""")
 
         # Collect the category data
         category = self.cursor.fetchall()
@@ -108,7 +117,8 @@ FROM products WHERE category = {user_input}""")
         # Transform tuples collected in category variable in list
         list = [x for elem in category for x in elem]
 
-        # Algorithm to select the best nustriscore in a category of product selected
+        # Algorithm to select the best nustriscore
+        # in a category of product selected
         self.cursor.execute(f"""SELECT *
 FROM products WHERE category = {list[0]}
 && nutri_score = 'a' LIMIT 1""")

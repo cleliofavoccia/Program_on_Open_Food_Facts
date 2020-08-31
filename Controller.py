@@ -1,4 +1,5 @@
-"""Program mechanics and scenarios with instantiation of view's and model's object """
+"""Program mechanics and scenarios
+with instantiation of view's and model's object """
 import requests
 from Model import DataBase
 from View import View
@@ -9,7 +10,8 @@ class Controller:
     (install database, scenario_fetch_substitute, etc...)
     of object type Controller"""
     def __init__(self):
-        """Attributes of Controller : Instantiation of view's and model's object"""
+        """Attributes of Controller :
+        Instantiation of view's and model's object"""
         self.database = DataBase()
         self.view = View()
 
@@ -108,7 +110,10 @@ class Controller:
             except KeyError:
                 default_value = "Donnée manquante"
 
-        # Zip all lists build (name_to_collect, description_to_collect, etc...) in
+        # Zip all lists build
+        # (name_to_collect,
+        # description_to_collect,
+        # etc...) in
         # products_collect list variable
         products_collected = list(
             zip(name_collected, description_collected,
@@ -137,8 +142,8 @@ class Controller:
         if user_input_restart == 2:
             exit()
         else:
-            self.view.input_1_2_error(user_input_restart,
-                                     self.restart())
+            self.view.input_1_2_error(
+                user_input_restart, self.restart())
 
     def save(self, rows):
         """Mechanic of save proposition"""
@@ -150,8 +155,7 @@ class Controller:
         elif user_input_saved == 2:
             pass
         else:
-            self.view.input_1_2_error(user_input_saved,
-                                     self.save(rows))
+            self.view.input_1_2_error(user_input_saved, self.save(rows))
 
     def scenario_fetch_substitute(self):
         """Mechanics of "Which aliment do you want to replace?" scenario"""
@@ -232,5 +236,4 @@ class Controller:
         if user_input == 2:
             self.scenario_my_substitutes()
         else:
-            self.view.input_1_2_error(user_input,
-                                     self.user_scenario())
+            self.view.input_1_2_error(user_input, self.user_scenario())

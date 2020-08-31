@@ -40,7 +40,9 @@ class View:
         for x in range(21):
             displayed_products_list.append(x)
         displayed_products_list.remove(0)
-        displayed_products_list = [i + (20 * (user_input_categories - 1)) for i in displayed_products_list]
+        displayed_products_list = \
+            [i + (20 * (user_input_categories - 1))
+             for i in displayed_products_list]
 
         user_input_products = View.user_input()
         while user_input_products not in displayed_products_list:
