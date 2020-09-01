@@ -1,8 +1,8 @@
 """Program mechanics and scenarios
 with instantiation of view's and model's object """
 import requests
-from Model import DataBase
-from View import View
+from model import DataBase
+from view import View
 
 
 class Controller:
@@ -15,7 +15,7 @@ class Controller:
         self.database = DataBase()
         self.view = View()
 
-    def fetch_categories_on_OFF(self):
+    def fetch_categories_on_off(self):
         """Fetch categories on API Open Food Facts with request method"""
 
         # Collect categories name from API OFF json
@@ -37,7 +37,7 @@ class Controller:
 
         return category_collected
 
-    def fetch_products_on_OFF(self):
+    def fetch_products_on_off(self):
         """Fetch products of different categories
         collected in fetch_categories_on_OFF method
         on API Open Food Facts with request method"""
@@ -129,9 +129,9 @@ class Controller:
 
         if len(self.database.check()) == 0:
             self.database.fill_categories(
-                                           self.fetch_categories_on_OFF())
+                                           self.fetch_categories_on_off())
             self.database.fill_products(
-                                         self.fetch_products_on_OFF())
+                                         self.fetch_products_on_off())
 
     def restart(self):
         """Mechanics of restart question"""
@@ -145,13 +145,13 @@ class Controller:
             self.view.input_1_2_error(
                 user_input_restart, self.restart())
 
-    def save(self, rows):
+    def save(self, rows, user_input):
         """Mechanic of save proposition"""
         self.view.print_saved_text()
         user_input_saved = self.view.user_input()
         if user_input_saved == 1:
             self.database.saved_substitute(
-                rows)
+                rows, user_input)
         elif user_input_saved == 2:
             pass
         else:
@@ -189,7 +189,7 @@ class Controller:
         self.view.print_substitute(rows_substitute)
 
         # Save substitute question
-        self.save(rows_substitute)
+        self.save(rows_substitute, user_input_product)
         # Restart question
         self.restart()
 
@@ -224,8 +224,27 @@ class Controller:
         # Print substitute
         self.view.print_substitute(rows_substitute)
 
-        # Restart question
-        self.restart()
+        # Print original products question
+        self.view.print_original_product_text()
+        user_input_original_products = self.view.user_input()
+
+        # If Yes
+        if user_input_original_products == 1:
+            # Find original products
+            self.database.fetch_original_products_from_substitute(
+                user_input_substitute)
+            rows_original_products = self.database.rows_cursor()
+
+            # Print original products
+            self.view.print_original_products(rows_original_products)
+
+            # Restart question
+            self.restart()
+
+        # If No
+        else:
+            # Restart question
+            self.restart()
 
     def user_scenario(self):
         """Mechanics of the program"""

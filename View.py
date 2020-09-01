@@ -99,3 +99,20 @@ class View:
         for row in rows:
             print("Choisissez parmi ces produits :"
                   "{0} - {1}".format(row[0], row[1]))
+
+    @staticmethod
+    def print_original_product_text():
+        """Print the restart question text"""
+        print("Voulez-vous voir les produits "
+              "que vous vouliez substitué par celui-ci ? "
+              "OUI - 1, NON - 2")
+
+    @staticmethod
+    def print_original_products(rows):
+        """Print the original products found with his informations"""
+        for row in rows:
+            print("Nom : {1}, Description : {2},"
+                  "Nutri-Score : {3},"
+                  "Magasins : {4}, URL : {5}"
+                  .format(row[0], row[1], row[2],
+                          row[3], row[4], row[5]))

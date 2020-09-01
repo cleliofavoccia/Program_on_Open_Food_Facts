@@ -42,13 +42,16 @@ class DataBase:
 
         # Create products table if not exists
         self.cursor.execute("""CREATE TABLE
-        IF NOT EXISTS products (id SMALLINT
-        AUTO_INCREMENT PRIMARY KEY, name TEXT,
-        description TEXT, nutri_score CHAR(1),
-        stores TEXT, url TEXT, category SMALLINT,
-        is_saved SMALLINT, CONSTRAINT category_id
-        FOREIGN KEY (category)
-        REFERENCES categories (id)) ENGINE=INNODB""")
+        IF NOT EXISTS products (id SMALLINT AUTO_INCREMENT PRIMARY KEY,
+        name TEXT, description TEXT, nutri_score CHAR(1), stores TEXT,
+        url TEXT, category SMALLINT, CONSTRAINT category_id
+        FOREIGN KEY (category) REFERENCES categories (id)) ENGINE=INNODB""")
+
+        # Create saves table if not exists
+        self.cursor.execute("""CREATE TABLE
+                IF NOT EXISTS saves (id SMALLINT AUTO_INCREMENT PRIMARY KEY,
+                productId SMALLINT, substituteId SMALLINT)
+                ENGINE=INNODB""")
 
     def check(self):
         """SQL command to check if
@@ -155,20 +158,24 @@ FROM products WHERE category = {list[0]}
 FROM products WHERE category = {list[0]}
 && nutri_score = 'a' LIMIT 1""")
 
-    def saved_substitute(self, rows_substitute):
+    def saved_substitute(self, rows_substitute, user_input):
         """SQL command to save the substitute found by the user"""
 
         list = [x for elem in rows_substitute for x in elem]
-        self.cursor.execute(f"""UPDATE products
-SET is_saved = '1' WHERE id = {list[0]}""")
+        # Insert product choosen index in productId
+        # and substitute found index in substituteId
+        # in saves table
+        self.cursor.execute(f"""INSERT INTO
+saves (productId, substituteId)
+VALUES ({user_input}, {list[0]})""")
 
     def fetch_substitute_of_categories(self, user_input):
         """SQL command to select products in category that
         user saved with method saved_substitute"""
 
         self.cursor.execute(f"""SELECT *
-FROM products WHERE category = {user_input} &&
-        is_saved IS NOT NULL""")
+FROM products INNER JOIN saves ON products.id = saves.substituteId
+WHERE products.category = {user_input}""")
 
     def fetch_substitute_saved(self, user_input):
         """SQL command to select the proposed products by
@@ -181,3 +188,11 @@ FROM products WHERE id = {user_input}""")
         """Collect the data from a SQL request"""
 
         return self.cursor.fetchall()
+
+    def fetch_original_products_from_substitute(self, user_input):
+        """SQL command to select products originally selected
+        to found the substitute saved"""
+
+        self.cursor.execute(f"""SELECT *
+        FROM products INNER JOIN saves ON products.id = saves.productId
+        WHERE saves.substituteId = {user_input}""")

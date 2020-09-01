@@ -1,5 +1,5 @@
 """Execute the program"""
-from Controller import Controller
+from controller import Controller
 
 if __name__ == "__main__":
     """Call of methods from Controller class to execute the program"""
